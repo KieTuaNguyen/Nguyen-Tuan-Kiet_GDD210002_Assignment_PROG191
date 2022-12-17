@@ -21,6 +21,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.JLabel;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
+
 import javax.swing.JTextPane;
 import javax.swing.RowFilter;
 import javax.swing.JTextField;
@@ -28,11 +31,16 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import java.awt.SystemColor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
@@ -85,7 +93,8 @@ public class BookManagementView extends JFrame {
 	public BookManagementView() {
 		this.model = new BookManagementModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1104, 696);
+		setBounds(100, 100, 1104, 729);
+		setTitle("Book Management System - 0.0.1");
 
 		Action action = new BookManagementController(this);
 
@@ -202,7 +211,7 @@ public class BookManagementView extends JFrame {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(action);
 		btnSearch.setFont(new Font("Verdana", Font.PLAIN, 17));
-		btnSearch.setBackground(UIManager.getColor("Button.light"));
+		btnSearch.setBackground(SystemColor.controlHighlight);
 		btnSearch.setBounds(884, 42, 106, 31);
 		contentPane.add(btnSearch);
 
@@ -249,11 +258,12 @@ public class BookManagementView extends JFrame {
 		contentPane.add(btnUpload);
 
 		JSeparator separator1 = new JSeparator();
+		separator1.setBackground(new Color(255, 255, 255));
 		separator1.setBounds(87, 20, 993, 2);
 		contentPane.add(separator1);
 
 		JSeparator separator2 = new JSeparator();
-		separator2.setBounds(197, 90, 893, 2);
+		separator2.setBounds(197, 90, 885, 2);
 		contentPane.add(separator2);
 
 		JSeparator separator2_1 = new JSeparator();
@@ -287,6 +297,24 @@ public class BookManagementView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(10, 321, 1070, 300);
 		contentPane.add(scrollPane);
+
+		JLabel labelRef = new JLabel("by KieTuaNguyen.");
+		labelRef.setBackground(SystemColor.desktop);
+		labelRef.setText("<html><a href='https://github.com/KieTuaNguyen'>by KieTuaNguyen.</a></html>");
+		labelRef.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		labelRef.setFont(new Font("Fira Code Medium", Font.PLAIN, 11));
+		labelRef.setBounds(497, 629, 112, 28);
+		contentPane.add(labelRef);
+		labelRef.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					Desktop.getDesktop().browse(new URI("https://github.com/KieTuaNguyen"));
+				} catch (IOException | URISyntaxException ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 
 		this.setVisible(true);
 	}
