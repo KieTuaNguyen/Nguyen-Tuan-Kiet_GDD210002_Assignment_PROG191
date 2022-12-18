@@ -6,9 +6,8 @@ import view.BookManagementView;
 
 public class Test {
   public static void main(String[] args) {
-    BookManagementView bookManagementView = new BookManagementView();
     try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      BookManagementView bookManagementView = new BookManagementView();
     } catch (Exception e) {
       e.printStackTrace();
     }

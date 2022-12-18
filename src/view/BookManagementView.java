@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import model.Book;
 import model.BookManagementModel;
 import javax.swing.JMenuBar;
@@ -94,6 +95,12 @@ public class BookManagementView extends JFrame {
 	 * Create the frame.
 	 */
 	public BookManagementView() {
+		try {
+			FlatIntelliJLaf.setup();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.model = new BookManagementModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1104, 729);
@@ -427,7 +434,6 @@ public class BookManagementView extends JFrame {
 				JOptionPane.showMessageDialog(null, "Insert failed");
 			}
 		}
-
 	}
 
 	public void update() {
@@ -566,8 +572,8 @@ public class BookManagementView extends JFrame {
 	public void reloadTable() {
 		while (true) {
 			DefaultTableModel model_table = (DefaultTableModel) table.getModel();
-			int numRow = model_table.getRowCount();
-			if (numRow == 0)
+			int rowNum = model_table.getRowCount();
+			if(rowNum==0)
 				break;
 			else
 				try {
@@ -576,35 +582,18 @@ public class BookManagementView extends JFrame {
 					e.printStackTrace();
 				}
 		}
-	}
-
-	public void alert() {
-		outer: if (textFieldID.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "ID is not empty");
-			textFieldID.requestFocus();
-			break outer;
-		} else if (textFieldTitle.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "Title is not empty");
-			textFieldTitle.requestFocus();
-			break outer;
-		} else if (textFieldPrice.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "Price is not empty");
-			textFieldPrice.requestFocus();
-			break outer;
-		} else if (textFieldAuthor.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "Author is not empty");
-			textFieldAuthor.requestFocus();
-			break outer;
-		} else if (textFieldPublisher.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "Publisher is not empty");
-			textFieldPublisher.requestFocus();
-			break outer;
-		} else if (textFieldPublicationTime.getText().length() == 0) {
-			JOptionPane.showMessageDialog(this, "Publication time is not empty");
-			textFieldPublicationTime.requestFocus();
-			break outer;
-		} else {
-			return;
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		for (Book book : this.model.getBooks()) {
+				try {
+					model.addRow(new Object[] { book.getID(),
+							book.getTitle(),
+							book.getPrice(),
+							book.getAuthor(),
+							book.getPublisher(),
+							book.getPublicationTime() });
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 		}
 	}
 }

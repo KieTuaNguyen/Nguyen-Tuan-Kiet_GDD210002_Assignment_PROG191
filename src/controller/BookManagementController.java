@@ -22,7 +22,6 @@ public class BookManagementController implements Action {
 		String cm = e.getActionCommand();
 		switch (cm) {
 			case "Insert":
-				this.view.alert();
 				this.view.addBook();
 				break;
 			case "Update":
