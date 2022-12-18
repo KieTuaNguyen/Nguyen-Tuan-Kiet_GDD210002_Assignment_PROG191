@@ -23,8 +23,7 @@ public class BookManagementController implements Action {
 		switch (cm) {
 			case "Insert":
 				this.view.alert();
-				Book book = this.view.getBookfromTable();
-				this.view.insert(book);
+				this.view.addBook();
 				break;
 			case "Update":
 				this.view.update();

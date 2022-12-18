@@ -63,5 +63,4 @@ public class BookManagementModel {
 		}
 		return false;
 	}
-
 }

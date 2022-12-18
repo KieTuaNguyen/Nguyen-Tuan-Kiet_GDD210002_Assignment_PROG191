@@ -41,8 +41,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -274,9 +277,12 @@ public class BookManagementView extends JFrame {
 		table.setFont(new Font("Fira Code Retina", Font.PLAIN, 15));
 		table.setModel(new DefaultTableModel(
 				new Object[][] {
-						{ "01", "Cuon Sach Thu Nhat", 11.0f, "Nguyen Tuan Kiet", "NXB Bao Dom", "15/12/2022" },
-						{ "02", "Cuon Sach Thu Hai", 12.0f, "Dang Van Tri Minh", "NXB Lien Minh", "16/12/2022" },
-						{ "03", "Cuon Sach Thu Ba", 13.0f, "Huynh Cong Chien", "NXB So Vo", "21/12/2022" },
+				// { "01", "Cuon Sach Thu Nhat", 11.0f, "Nguyen Tuan Kiet", "NXB Bao Dom",
+				// "15/12/2022" },
+				// { "02", "Cuon Sach Thu Hai", 12.0f, "Dang Van Tri Minh", "NXB Lien Minh",
+				// "16/12/2022" },
+				// { "03", "Cuon Sach Thu Ba", 13.0f, "Huynh Cong Chien", "NXB So Vo",
+				// "21/12/2022" },
 				},
 				new String[] {
 						"ID", "Title", "Price", "Author", "Publisher", "Publication Time"
@@ -315,7 +321,6 @@ public class BookManagementView extends JFrame {
 				}
 			}
 		});
-
 		this.setVisible(true);
 	}
 
@@ -346,27 +351,83 @@ public class BookManagementView extends JFrame {
 	public Book getBookfromTable() {
 		String ID = textFieldID.getText();
 		String title = textFieldTitle.getText();
-		float price = Float.parseFloat(textFieldPrice.getText());
 		String author = textFieldAuthor.getText();
 		Date publicationTime = new Date(textFieldPublicationTime.getText());
 		String publisher = textFieldPublisher.getText();
+		float price = 0;
+		try {
+			price = Float.parseFloat(textFieldPrice.getText());
+			if (price < 0) {
+				JOptionPane.showMessageDialog(null, "The price must be greater than 0.");
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "The price must be a number.");
+		}
 		return new Book(ID, title, price, author, publicationTime, publisher);
 	}
 
 	public void insert(Book book) {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		try {
-			model.addRow(new Object[] { book.getID(),
-					book.getTitle(),
-					book.getPrice(),
-					book.getAuthor(),
-					book.getPublisher(),
-					book.getPublicationTime() });
-			this.model.insert(book);
-			JOptionPane.showMessageDialog(null, "Insert successfully");
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Insert failed");
+		if (this.model.isExist(book)) {
+			JOptionPane.showMessageDialog(null, "The book is already exist.");
+		} else {
+			try {
+				model.addRow(new Object[] { book.getID(),
+						book.getTitle(),
+						book.getPrice(),
+						book.getAuthor(),
+						book.getPublisher(),
+						book.getPublicationTime() });
+				this.model.insert(book);
+				JOptionPane.showMessageDialog(null, "Insert successfully");
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Insert failed");
+			}
 		}
+	}
+
+	public void addBook() {
+		String ID = textFieldID.getText();
+		String title = textFieldTitle.getText();
+		String author = textFieldAuthor.getText();
+		Date publicationTime = null;
+		try {
+			publicationTime = new Date(textFieldPublicationTime.getText());
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(null, "The publication time must be in the format dd/MM/yyyy.");
+			return;
+		}
+		String publisher = textFieldPublisher.getText();
+		float price = 0;
+		try {
+			price = Float.parseFloat(textFieldPrice.getText());
+			if (price < 0) {
+				JOptionPane.showMessageDialog(null, "The price must be greater than 0.");
+				return;
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "The price must be a number.");
+			return;
+		}
+		Book book = new Book(ID, title, price, author, publicationTime, publisher);
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		if (this.model.isExist(book)) {
+			JOptionPane.showMessageDialog(null, "The book is already exist.");
+		} else {
+			try {
+				model.addRow(new Object[] { book.getID(),
+						book.getTitle(),
+						book.getPrice(),
+						book.getAuthor(),
+						book.getPublisher(),
+						book.getPublicationTime() });
+				this.model.insert(book);
+				JOptionPane.showMessageDialog(null, "Insert successfully");
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Insert failed");
+			}
+		}
+
 	}
 
 	public void update() {
@@ -394,6 +455,10 @@ public class BookManagementView extends JFrame {
 	public void delete() {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int[] rows = table.getSelectedRows();
+		if (rows.length == 0) {
+			JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+			return;
+		}
 		if (sorter != null) {
 			for (int i = 0; i < rows.length; i++) {
 				int rowDiff = sorter.convertRowIndexToModel(rows[i]);
@@ -501,8 +566,8 @@ public class BookManagementView extends JFrame {
 	public void reloadTable() {
 		while (true) {
 			DefaultTableModel model_table = (DefaultTableModel) table.getModel();
-			int soLuongDong = model_table.getRowCount();
-			if (soLuongDong == 0)
+			int numRow = model_table.getRowCount();
+			if (numRow == 0)
 				break;
 			else
 				try {
@@ -510,9 +575,6 @@ public class BookManagementView extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-		}
-		for (Book st : this.model.getBooks()) {
-			this.insert(st);
 		}
 	}
 
