@@ -97,7 +97,7 @@ public class BookManagementView extends JFrame {
 		this.model = new BookManagementModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1104, 729);
-		setTitle("Book Management System - 0.0.1");
+		setTitle("Book Management System - 0.1.7");
 
 		Action action = new BookManagementController(this);
 
@@ -341,6 +341,11 @@ public class BookManagementView extends JFrame {
 		textFieldAuthor.setText("");
 		textFieldPublisher.setText("");
 		textFieldPublicationTime.setText("");
+		RowFilter<DefaultTableModel, Object> rf = RowFilter.regexFilter("", 0);
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		sorter = new TableRowSorter<>(model_table);
+		sorter.setRowFilter(rf);
+		table.setRowSorter(sorter);
 	}
 
 	public Book getBookfromTable() {
@@ -382,74 +387,82 @@ public class BookManagementView extends JFrame {
 	}
 
 	public void addBook() {
-		String ID = textFieldID.getText();
-		String title = textFieldTitle.getText();
-		String author = textFieldAuthor.getText();
-		Date publicationTime = null;
 		try {
-			publicationTime = new Date(textFieldPublicationTime.getText());
-		} catch (IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(null, "The publication time must be in the format dd/MM/yyyy.");
-			return;
-		}
-		String publisher = textFieldPublisher.getText();
-		float price = 0;
-		try {
-			price = Float.parseFloat(textFieldPrice.getText());
-			if (price < 0) {
-				JOptionPane.showMessageDialog(null, "The price must be greater than 0.");
+			String ID = textFieldID.getText();
+			String title = textFieldTitle.getText();
+			String author = textFieldAuthor.getText();
+			Date publicationTime = null;
+			try {
+				publicationTime = new Date(textFieldPublicationTime.getText());
+			} catch (IllegalArgumentException e) {
+				JOptionPane.showMessageDialog(null, "The publication time must be in the format dd/MM/yyyy.");
 				return;
 			}
-		} catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(null, "The price must be a number.");
-			return;
-		}
-		Book book = new Book(ID, title, price, author, publicationTime, publisher);
-		DefaultTableModel model = (DefaultTableModel) table.getModel();
-		if (this.model.isExist(book)) {
-			JOptionPane.showMessageDialog(null, "The book is already exist.");
-		} else {
+			String publisher = textFieldPublisher.getText();
+			float price = 0;
 			try {
-				model.addRow(new Object[] { book.getID(),
-						book.getTitle(),
-						book.getPrice(),
-						book.getAuthor(),
-						book.getPublisher(),
-						book.getPublicationTime() });
-				this.model.insert(book);
-				JOptionPane.showMessageDialog(null, "Insert successfully");
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Insert failed");
+				price = Float.parseFloat(textFieldPrice.getText());
+				if (price < 0) {
+					JOptionPane.showMessageDialog(null, "The price must be greater than 0.");
+					return;
+				}
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "The price must be a number.");
+				return;
 			}
+			Book book = new Book(ID, title, price, author, publicationTime, publisher);
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			if (this.model.isExist(book)) {
+				JOptionPane.showMessageDialog(null, "The book is already exist.");
+			} else {
+				try {
+					model.addRow(new Object[] { book.getID(),
+							book.getTitle(),
+							book.getPrice(),
+							book.getAuthor(),
+							book.getPublisher(),
+							book.getPublicationTime() });
+					this.model.insert(book);
+					JOptionPane.showMessageDialog(null, "Insert successfully");
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Insert failed");
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(null, "Insert failed");
 		}
-
 	}
 
 	public void update() {
-		DefaultTableModel modelTable = (DefaultTableModel) table.getModel();
-		int i = table.getSelectedRow();
-		int[] rows = table.getSelectedRows();
-		if (rows.length == 0) {
-			JOptionPane.showMessageDialog(this, "Please select a row to update.");
+		try {
+			DefaultTableModel modelTable = (DefaultTableModel) table.getModel();
+			int i = table.getSelectedRow();
+			int[] rows = table.getSelectedRows();
+			if (rows.length == 0) {
+				JOptionPane.showMessageDialog(this, "Please select a row to update.");
+				return;
+			}
+			if (sorter != null) {
+				int rowInModel = sorter.convertRowIndexToModel(i);
+				i = rowInModel;
+			}
+			if (i < 0) {
+				JOptionPane.showMessageDialog(this, "Please select a row to update.");
+				return;
+			} else {
+				Book book = getBookfromTable();
+				modelTable.setValueAt(book.getID(), i, 0);
+				modelTable.setValueAt(book.getTitle(), i, 1);
+				modelTable.setValueAt(book.getPrice(), i, 2);
+				modelTable.setValueAt(book.getAuthor(), i, 3);
+				modelTable.setValueAt(book.getPublisher(), i, 4);
+				modelTable.setValueAt(book.getPublicationTime(), i, 5);
+				model.updateBook(book, i);
+				JOptionPane.showMessageDialog(this, "Update successfully.");
+			}
+		} catch (IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(null, "The publication time must be in the format dd/MM/yyyy.");
 			return;
-		}
-		if (sorter != null) {
-			int rowInModel = sorter.convertRowIndexToModel(i);
-			i = rowInModel;
-		}
-		if (i < 0) {
-			JOptionPane.showMessageDialog(this, "Please select a row to update.");
-			return;
-		} else {
-			Book book = getBookfromTable();
-			modelTable.setValueAt(book.getID(), i, 0);
-			modelTable.setValueAt(book.getTitle(), i, 1);
-			modelTable.setValueAt(book.getPrice(), i, 2);
-			modelTable.setValueAt(book.getAuthor(), i, 3);
-			modelTable.setValueAt(book.getPublisher(), i, 4);
-			modelTable.setValueAt(book.getPublicationTime(), i, 5);
-			model.updateBook(book, i);
-			JOptionPane.showMessageDialog(this, "Update successfully.");
 		}
 	}
 
