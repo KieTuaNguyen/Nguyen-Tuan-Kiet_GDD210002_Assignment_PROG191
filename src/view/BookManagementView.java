@@ -277,12 +277,7 @@ public class BookManagementView extends JFrame {
 		table.setFont(new Font("Fira Code Retina", Font.PLAIN, 15));
 		table.setModel(new DefaultTableModel(
 				new Object[][] {
-				// { "01", "Cuon Sach Thu Nhat", 11.0f, "Nguyen Tuan Kiet", "NXB Bao Dom",
-				// "15/12/2022" },
-				// { "02", "Cuon Sach Thu Hai", 12.0f, "Dang Van Tri Minh", "NXB Lien Minh",
-				// "16/12/2022" },
-				// { "03", "Cuon Sach Thu Ba", 13.0f, "Huynh Cong Chien", "NXB So Vo",
-				// "21/12/2022" },
+
 				},
 				new String[] {
 						"ID", "Title", "Price", "Author", "Publisher", "Publication Time"
@@ -433,11 +428,17 @@ public class BookManagementView extends JFrame {
 	public void update() {
 		DefaultTableModel modelTable = (DefaultTableModel) table.getModel();
 		int i = table.getSelectedRow();
+		int[] rows = table.getSelectedRows();
+		if (rows.length == 0) {
+			JOptionPane.showMessageDialog(this, "Please select a row to update.");
+			return;
+		}
 		if (sorter != null) {
 			int rowInModel = sorter.convertRowIndexToModel(i);
 			i = rowInModel;
 		}
 		if (i < 0) {
+			JOptionPane.showMessageDialog(this, "Please select a row to update.");
 			return;
 		} else {
 			Book book = getBookfromTable();
@@ -566,8 +567,8 @@ public class BookManagementView extends JFrame {
 	public void reloadTable() {
 		while (true) {
 			DefaultTableModel model_table = (DefaultTableModel) table.getModel();
-			int numRow = model_table.getRowCount();
-			if (numRow == 0)
+			int rowNum = model_table.getRowCount();
+			if (rowNum == 0)
 				break;
 			else
 				try {
@@ -575,6 +576,19 @@ public class BookManagementView extends JFrame {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+		}
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		for (Book book : this.model.getBooks()) {
+			try {
+				model.addRow(new Object[] { book.getID(),
+						book.getTitle(),
+						book.getPrice(),
+						book.getAuthor(),
+						book.getPublisher(),
+						book.getPublicationTime() });
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
