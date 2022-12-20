@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -57,10 +58,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import controller.BookManagementController;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BookManagementView extends JFrame {
 
-	private JPanel contentPane;
+	public JPanel contentPane;
 	public BookManagementModel model;
 	public JTextField textFieldID;
 	public JTextField textFieldTitle;
@@ -69,8 +73,8 @@ public class BookManagementView extends JFrame {
 	public JTextField textFieldPublisher;
 	public JTextField textFieldPublicationTime;
 	public TableRowSorter<DefaultTableModel> sorter;
-	private JTextField textFieldSearch;
-	private JTable table;
+	public JTextField textFieldSearch;
+	public JTable table;
 
 	DefaultTableModel listBookTable;
 
@@ -97,7 +101,7 @@ public class BookManagementView extends JFrame {
 		this.model = new BookManagementModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1104, 729);
-		setTitle("Book Management System - 0.1.7");
+		setTitle("Book Management System - 0.2.1");
 
 		Action action = new BookManagementController(this);
 
@@ -208,21 +212,21 @@ public class BookManagementView extends JFrame {
 
 		textFieldSearch = new JTextField();
 		textFieldSearch.setColumns(10);
-		textFieldSearch.setBounds(628, 42, 246, 31);
+		textFieldSearch.setBounds(454, 40, 246, 31);
 		contentPane.add(textFieldSearch);
 
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(action);
 		btnSearch.setFont(new Font("Verdana", Font.PLAIN, 17));
 		btnSearch.setBackground(SystemColor.controlHighlight);
-		btnSearch.setBounds(884, 42, 106, 31);
+		btnSearch.setBounds(710, 40, 106, 31);
 		contentPane.add(btnSearch);
 
 		JButton btnClear = new JButton("Clear");
 		btnClear.addActionListener(action);
 		btnClear.setFont(new Font("Verdana", Font.PLAIN, 17));
 		btnClear.setBackground(SystemColor.controlHighlight);
-		btnClear.setBounds(1000, 42, 80, 31);
+		btnClear.setBounds(826, 40, 80, 31);
 		contentPane.add(btnClear);
 
 		JButton btnInsert = new JButton("Insert");
@@ -280,7 +284,7 @@ public class BookManagementView extends JFrame {
 
 				},
 				new String[] {
-						"ID", "Title", "Price", "Author", "Publisher", "Publication Time"
+						"ID", "Title", "Price (VND)", "Author", "Publisher", "Publication Time"
 				}));
 		table.getColumnModel().getColumn(0).setPreferredWidth(38);
 		table.getColumnModel().getColumn(1).setPreferredWidth(132);
@@ -306,6 +310,18 @@ public class BookManagementView extends JFrame {
 		labelRef.setFont(new Font("Fira Code Medium", Font.PLAIN, 11));
 		labelRef.setBounds(497, 629, 112, 28);
 		contentPane.add(labelRef);
+
+		JButton btnSumOfPrice = new JButton("Total Price");
+		btnSumOfPrice.addActionListener(action);
+		btnSumOfPrice.setFont(new Font("Verdana", Font.PLAIN, 17));
+		btnSumOfPrice.setBackground(SystemColor.controlHighlight);
+		btnSumOfPrice.setBounds(924, 40, 154, 31);
+		contentPane.add(btnSumOfPrice);
+
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setOrientation(SwingConstants.VERTICAL);
+		separator_1.setBounds(914, 40, 2, 31);
+		contentPane.add(separator_1);
 		labelRef.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -467,7 +483,7 @@ public class BookManagementView extends JFrame {
 	}
 
 	public void delete() {
-		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
 		int[] rows = table.getSelectedRows();
 		if (rows.length == 0) {
 			JOptionPane.showMessageDialog(this, "Please select a row to delete.");
@@ -484,7 +500,8 @@ public class BookManagementView extends JFrame {
 			JOptionPane.showMessageDialog(this, "Delete failed.");
 		} else if (option == JOptionPane.YES_OPTION) {
 			for (int i = 0; i < rows.length; i++) {
-				model.removeRow(rows[i] - i);
+				model_table.removeRow(rows[i] - i);
+				model.deleteBook(rows[i] - i);
 			}
 			JOptionPane.showMessageDialog(this, "Delete successfully.");
 		}
@@ -551,6 +568,7 @@ public class BookManagementView extends JFrame {
 	}
 
 	public void importFile() {
+		// try {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -558,6 +576,10 @@ public class BookManagementView extends JFrame {
 			openFile(file);
 			reloadTable();
 		}
+		JOptionPane.showMessageDialog(this, "Import file successfully!");
+		// } catch (StreamCorruptedException e) {
+		// JOptionPane.showMessageDialog(this, "Import file failed!");
+		// }
 	}
 
 	public void openFile(File file) {
@@ -605,8 +627,34 @@ public class BookManagementView extends JFrame {
 		}
 	}
 
+	public void totalPrice() {
+		try {
+			double total = 0;
+			for (Book book : this.model.getBooks()) {
+				total += book.getPrice();
+			}
+			if (total == 0) {
+				JOptionPane.showMessageDialog(this, "Please import data!");
+				return;
+			} else {
+				JOptionPane.showMessageDialog(this, "Total price: " + total);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void alert() {
-		outer: if (textFieldID.getText().length() == 0) {
+		outer: if (textFieldID.getText().length() == 0
+				&& textFieldTitle.getText().length() == 0
+				&& textFieldPrice.getText().length() == 0
+				&& textFieldAuthor.getText().length() == 0
+				&& textFieldPublisher.getText().length() == 0
+				&& textFieldPublicationTime.getText().length() == 0) {
+			JOptionPane.showMessageDialog(this, "All fields are not empty");
+			textFieldID.requestFocus();
+			break outer;
+		} else if (textFieldID.getText().length() == 0) {
 			JOptionPane.showMessageDialog(this, "ID is not empty");
 			textFieldID.requestFocus();
 			break outer;
