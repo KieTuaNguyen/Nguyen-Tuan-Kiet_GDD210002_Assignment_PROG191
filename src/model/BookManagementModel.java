@@ -55,6 +55,10 @@ public class BookManagementModel {
 		this.books.remove(book);
 	}
 
+	public void deleteBook(int book) {
+		this.books.remove(book);
+	}
+
 	public boolean isExist(Book book) {
 		for (Book bk : this.books) {
 			if (bk.getID().equals(book.getID())) {

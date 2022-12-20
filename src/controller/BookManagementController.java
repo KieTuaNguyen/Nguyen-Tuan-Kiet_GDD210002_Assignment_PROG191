@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
+import java.io.StreamCorruptedException;
 import java.util.Date;
 
 import javax.swing.Action;
@@ -39,6 +40,9 @@ public class BookManagementController implements Action {
 				break;
 			case "Clear":
 				this.view.clearFilter();
+				break;
+			case "Total Price":
+				this.view.totalPrice();
 				break;
 			case "Import":
 				this.view.importFile();
