@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,7 +22,7 @@ import model.BookManagementModel;
 import view.BookManagementView;
 
 public class BookManagementController implements Action {
-	public BookManagementView view;
+	public static BookManagementView view;
 	public TableRowSorter<DefaultTableModel> sorter;
 	public BookManagementModel model;
 
@@ -381,6 +380,31 @@ public class BookManagementController implements Action {
 		sorter = new TableRowSorter<>(model_table);
 		sorter.setRowFilter(rf);
 		view.table.setRowSorter(sorter);
+	}
+
+	public static void addBookToTable(Book book) {
+		DefaultTableModel model_table = (DefaultTableModel) view.table.getModel();
+		model_table.addRow(new Object[] { book.getID(),
+				book.getTitle(),
+				book.getPrice(),
+				book.getAuthor(),
+				book.getPublisher(),
+				book.getPublicationTime() });
+	}
+
+	public static void updateToTable(Book book) {
+		DefaultTableModel model_table = (DefaultTableModel) view.table.getModel();
+		model_table.setValueAt(book.getID(), view.table.getSelectedRow(), 0);
+		model_table.setValueAt(book.getTitle(), view.table.getSelectedRow(), 1);
+		model_table.setValueAt(book.getPrice(), view.table.getSelectedRow(), 2);
+		model_table.setValueAt(book.getAuthor(), view.table.getSelectedRow(), 3);
+		model_table.setValueAt(book.getPublisher(), view.table.getSelectedRow(), 4);
+		model_table.setValueAt(book.getPublicationTime(), view.table.getSelectedRow(), 5);
+	}
+
+	public static void deleteBook() {
+		DefaultTableModel model_table = (DefaultTableModel) view.table.getModel();
+		model_table.removeRow(view.table.getSelectedRow());
 	}
 
 	@Override

@@ -6,49 +6,25 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.Book;
 import model.BookManagementModel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import java.awt.Font;
 
 import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.JLabel;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
-
-import javax.swing.JTextPane;
-import javax.swing.RowFilter;
 import javax.swing.JTextField;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
 import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.InputMismatchException;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -59,8 +35,6 @@ import javax.swing.table.TableRowSorter;
 
 import controller.BookManagementController;
 import javax.swing.SwingConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class BookManagementView extends JFrame {
 

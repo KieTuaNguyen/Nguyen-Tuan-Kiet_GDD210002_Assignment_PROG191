@@ -3,11 +3,7 @@ package model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.InputMismatchException;
 import java.util.Objects;
-import java.util.Scanner;
-
-import javax.swing.JOptionPane;
 
 public class Book implements Serializable {
 	private String ID;
