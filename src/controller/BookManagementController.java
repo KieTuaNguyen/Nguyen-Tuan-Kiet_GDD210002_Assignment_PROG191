@@ -419,4 +419,17 @@ public class BookManagementController implements Action {
 
 	}
 
+	public void updateBook(Book book) {
+		for (Book bk : this.model.getBooks()) {
+			if (bk.getID().equals(book.getID())) {
+				bk.setTitle(book.getTitle());
+				bk.setPrice(book.getPrice());
+				bk.setAuthor(book.getAuthor());
+				bk.setPublisher(book.getPublisher());
+				bk.setPublicationTime(new Date(view.textFieldPublicationTime.getText()));
+			}
+		}
+		reloadTable();
+	}
+
 }
