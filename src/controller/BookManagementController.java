@@ -149,6 +149,7 @@ public class BookManagementController implements Action {
 				price = Float.parseFloat(view.textFieldPrice.getText());
 				if (price < 0) {
 					JOptionPane.showMessageDialog(null, "The price must be greater than 0.");
+					return;
 				}
 			} catch (NumberFormatException e) {
 				JOptionPane.showMessageDialog(null, "The price must be a number.");
@@ -237,10 +238,9 @@ public class BookManagementController implements Action {
 	}
 
 	public void search() {
-		outer: if (view.textFieldSearch.getText().length() == 0) {
+		if (view.textFieldSearch.getText().length() == 0) {
 			JOptionPane.showMessageDialog(view, "Please enter the specified ID.");
 			view.textFieldSearch.requestFocus();
-			break outer;
 		} else {
 			String search = view.textFieldSearch.getText();
 			RowFilter<DefaultTableModel, Object> rf = RowFilter.regexFilter(search, 0);
