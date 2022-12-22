@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 public class BookManagementModel {
 	private ArrayList<Book> books;
 	private String option;
@@ -48,7 +50,12 @@ public class BookManagementModel {
 	}
 
 	public void updateBook(Book book, int i) {
-		books.set(i, book);
+		try {
+			books.set(i, book);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+		}
+
 	}
 
 	public void delete(Book book) {
