@@ -296,14 +296,18 @@ public class BookManagementController implements Action {
 	}
 
 	public void importFile() {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showOpenDialog(view);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			openFile(file);
-			reloadTable();
+		try {
+			JFileChooser fc = new JFileChooser();
+			int returnVal = fc.showOpenDialog(view);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				openFile(file);
+				reloadTable();
+			}
+			JOptionPane.showMessageDialog(view, "Import file successfully!");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(view, "Import file failed!");
 		}
-		JOptionPane.showMessageDialog(view, "Import file successfully!");
 	}
 
 	public void openFile(File file) {

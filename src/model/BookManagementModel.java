@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 public class BookManagementModel {
 	private ArrayList<Book> books;
 	private String option;
-
 	private String fileName;
 
 	public BookManagementModel() {

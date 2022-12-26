@@ -74,7 +74,7 @@ public class BookManagementView extends JFrame {
 		this.model = new BookManagementModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1104, 729);
-		setTitle("Book Management System - 0.2.2");
+		setTitle("Book Management System - 0.2.4");
 
 		Action action = new BookManagementController(this);
 
